@@ -1271,6 +1271,12 @@ function PlayPageClient() {
   // ---------------------------------------------------------------------------
   // 集数切换
   // ---------------------------------------------------------------------------
+  // 仅 WebKit 浏览器需要销毁并重建播放器实例，其他浏览器走 switch 流程，
+  // 这样切换集数时全屏状态不会被中断。
+  const isWebkitBrowser = () =>
+    typeof window !== 'undefined' &&
+    typeof (window as any).webkitConvertPointFromNodeToPage === 'function';
+
   // 处理集数切换
   const handleEpisodeChange = async (episodeNumber: number) => {
     if (episodeNumber === currentEpisodeIndexRef.current) return;
@@ -1279,7 +1285,7 @@ function PlayPageClient() {
       if (artPlayerRef.current && artPlayerRef.current.paused) {
         saveCurrentPlayProgress();
       }
-      if (artPlayerRef.current) {
+      if (artPlayerRef.current && isWebkitBrowser()) {
         cleanupPlayer();
         setIsDanmakuPluginReady(false);
         setCurrentTooltip("");
@@ -1308,7 +1314,7 @@ function PlayPageClient() {
       if (artPlayerRef.current && !artPlayerRef.current.paused) {
         saveCurrentPlayProgress();
       }
-      if(artPlayerRef.current){
+      if (artPlayerRef.current && isWebkitBrowser()) {
         cleanupPlayer();
         setIsDanmakuPluginReady(false);
         setCurrentTooltip("");
@@ -1324,7 +1330,7 @@ function PlayPageClient() {
       if (artPlayerRef.current && !artPlayerRef.current.paused) {
         saveCurrentPlayProgress();
       }
-      if(artPlayerRef.current){
+      if (artPlayerRef.current && isWebkitBrowser()) {
         cleanupPlayer();
         setIsDanmakuPluginReady(false);
         setCurrentTooltip("");
