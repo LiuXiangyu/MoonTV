@@ -2,7 +2,6 @@
 
 import { ExternalLink, Heart, Link, PlayCircleIcon, Trash2 } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import {
@@ -18,7 +17,6 @@ import { processImageUrl } from '@/lib/utils';
 
 import { ImagePlaceholder } from '@/components/ImagePlaceholder';
 import MobileActionSheet from '@/components/MobileActionSheet';
-import { useNavigationLoading } from '@/components/NavigationLoadingProvider';
 
 interface VideoCardProps {
   id?: string;
@@ -59,8 +57,6 @@ export default function VideoCard({
   type = '',
   isBangumi = false,
 }: VideoCardProps) {
-  const router = useRouter();
-  const { startLoading } = useNavigationLoading();
   const [favorited, setFavorited] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showSources, setShowSources] = useState(false);
@@ -194,38 +190,34 @@ export default function VideoCard({
   );
 
   const handleClick = useCallback(() => {
-    // 点击时不再检查收藏状态
-    // 触发加载动画
-    startLoading();
-
     if (from === 'douban') {
-      router.push(
+      window.open(
         `/play?title=${encodeURIComponent(actualTitle.trim())}${
           actualYear ? `&year=${actualYear}` : ''
-        }${actualSearchType ? `&stype=${actualSearchType}` : ''}`
+        }${actualSearchType ? `&stype=${actualSearchType}` : ''}`,
+        '_blank'
       );
     } else if (actualSource && actualId) {
-      router.push(
+      window.open(
         `/play?source=${actualSource}&id=${actualId}&title=${encodeURIComponent(
           actualTitle
         )}${actualYear ? `&year=${actualYear}` : ''}${
           isAggregate ? '&prefer=true' : ''
         }${
           actualQuery ? `&stitle=${encodeURIComponent(actualQuery.trim())}` : ''
-        }${actualSearchType ? `&stype=${actualSearchType}` : ''}`
+        }${actualSearchType ? `&stype=${actualSearchType}` : ''}`,
+        '_blank'
       );
     }
   }, [
     from,
     actualSource,
     actualId,
-    router,
     actualTitle,
     actualYear,
     isAggregate,
     actualQuery,
     actualSearchType,
-    startLoading,
   ]);
 
   const config = useMemo(() => {
